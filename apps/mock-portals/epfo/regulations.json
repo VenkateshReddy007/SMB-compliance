@@ -1,0 +1,63 @@
+{
+  "portal": "EPFO Mock Portal",
+  "version": "1.0.0",
+  "last_updated": "2026-05-08T00:00:00Z",
+  "hash_check": "v1_epfo_initial",
+  "regulations": [
+    {
+      "id": "PF_WAGE_CEILING_001",
+      "title": "PF Wage Ceiling",
+      "category": "wage_ceiling",
+      "value": 15000,
+      "unit": "INR_PER_MONTH",
+      "description": "Maximum basic salary for mandatory PF contribution calculation",
+      "effective_date": "2026-01-01",
+      "applies_to": ["PF_REGISTERED"],
+      "state": "ALL"
+    },
+    {
+      "id": "PF_EMPLOYER_RATE_001",
+      "title": "Employer PF Contribution Rate",
+      "category": "contribution_rate",
+      "value": 12,
+      "unit": "PERCENT",
+      "description": "Employer contributes 12% of basic salary to PF",
+      "effective_date": "2026-01-01",
+      "applies_to": ["PF_REGISTERED"],
+      "state": "ALL"
+    },
+    {
+      "id": "PF_ECR_DUE_DATE_001",
+      "title": "ECR Filing Due Date",
+      "category": "due_date",
+      "value": 15,
+      "unit": "DAY_OF_MONTH",
+      "description": "Electronic Challan cum Return must be filed by 15th of following month",
+      "effective_date": "2026-01-01",
+      "applies_to": ["PF_REGISTERED"],
+      "state": "ALL"
+    },
+    {
+      "id": "ESI_THRESHOLD_001",
+      "title": "ESI Wage Threshold",
+      "category": "threshold",
+      "value": 21000,
+      "unit": "INR_PER_MONTH",
+      "description": "Employees earning up to ₹21,000/month are covered under ESI",
+      "effective_date": "2026-01-01",
+      "applies_to": ["ESI_REGISTERED"],
+      "state": "ALL"
+    },
+    {
+      "id": "PF_REGISTRATION_THRESHOLD_001",
+      "title": "PF Registration Employee Threshold",
+      "category": "threshold",
+      "value": 20,
+      "unit": "EMPLOYEE_COUNT",
+      "description": "Businesses with 20+ employees must register for PF",
+      "effective_date": "2026-01-01",
+      "applies_to": ["ALL_BUSINESSES"],
+      "state": "ALL"
+    }
+  ]
+}

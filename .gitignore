@@ -1,0 +1,98 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+vendor/
+
+# Environment variables
+.env
+.env.*
+*.local
+
+# Build output
+dist/
+build/
+out/
+
+# Cache
+.cache/
+*.cache
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+
+# C/C++
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.lib
+
+# Rust
+target/
+Cargo.lock
+
+# Go
+bin/
+pkg/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
+# Mac system files
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Lock files (optional, depends on project)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Misc
+*.zip
+*.tar
+*.gz
+*.rar

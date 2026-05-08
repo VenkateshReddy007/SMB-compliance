@@ -1,0 +1,41 @@
+{
+  "portal": "FSSAI Mock Portal",
+  "version": "1.0.0",
+  "last_updated": "2026-05-08T00:00:00Z",
+  "hash_check": "v1_fssai_initial",
+  "regulations": [
+    {
+      "id": "FSSAI_RENEWAL_PERIOD_001",
+      "title": "FSSAI License Renewal Period",
+      "category": "renewal",
+      "value": 12,
+      "unit": "MONTHS",
+      "description": "FSSAI license must be renewed every 12 months before expiry",
+      "effective_date": "2026-01-01",
+      "applies_to": ["FOOD_BUSINESSES"],
+      "state": "ALL"
+    },
+    {
+      "id": "FSSAI_THRESHOLD_STATE_001",
+      "title": "State License Turnover Threshold",
+      "category": "threshold",
+      "value": 1200000,
+      "unit": "INR_ANNUAL",
+      "description": "Food businesses with turnover above ₹12L need State license (not basic registration)",
+      "effective_date": "2026-01-01",
+      "applies_to": ["FOOD_BUSINESSES"],
+      "state": "ALL"
+    },
+    {
+      "id": "FSSAI_ANNUAL_RETURN_001",
+      "title": "FSSAI Annual Return Due Date",
+      "category": "due_date",
+      "value": "31_MAY",
+      "unit": "DATE_STRING",
+      "description": "Annual return in Form D1 due by May 31 every year",
+      "effective_date": "2026-01-01",
+      "applies_to": ["FOOD_BUSINESSES_STATE_LICENSE"],
+      "state": "ALL"
+    }
+  ]
+}

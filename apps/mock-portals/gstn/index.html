@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSTN Regulatory Portal (Mock)</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 24px; background: #f7faf5; color: #1f3a1f; }
+      h1 { color: #355e3b; }
+      .note { background: #e6f2dd; border-left: 4px solid #5b8c5a; padding: 10px; margin: 16px 0; }
+      table { border-collapse: collapse; width: 100%; background: #fff; }
+      th, td { border: 1px solid #c8d8c0; padding: 8px; text-align: left; font-size: 14px; }
+      th { background: #d3e6cb; color: #234623; }
+      code { background: #eef6e8; padding: 2px 6px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>GSTN Regulatory Portal (Mock)</h1>
+    <div class="note">This is a mock portal for RegGraph AI demo.</div>
+    <p id="meta"></p>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Title</th><th>Category</th><th>Value</th><th>Unit</th><th>Effective Date</th><th>State</th><th>Applies To</th><th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="reg-body"></tbody>
+    </table>
+    <script>
+      fetch("./regulations.json").then((r) => r.json()).then((data) => {
+        document.getElementById("meta").innerHTML = "Version: <code>" + data.version + "</code> | Last Updated: <code>" + data.last_updated + "</code> | Hash: <code>" + data.hash_check + "</code>";
+        const body = document.getElementById("reg-body");
+        data.regulations.forEach((reg) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = "<td>" + reg.id + "</td><td>" + reg.title + "</td><td>" + reg.category + "</td><td>" + reg.value + "</td><td>" + reg.unit + "</td><td>" + reg.effective_date + "</td><td>" + reg.state + "</td><td>" + reg.applies_to.join(", ") + "</td><td>" + reg.description + "</td>";
+          body.appendChild(tr);
+        });
+      });
+    </script>
+  </body>
+</html>

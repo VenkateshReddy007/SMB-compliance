@@ -1,0 +1,52 @@
+{
+  "portal": "Professional Tax State Portal (Mock)",
+  "version": "1.0.0",
+  "last_updated": "2026-05-08T00:00:00Z",
+  "hash_check": "v1_pt_initial",
+  "regulations": [
+    {
+      "id": "PT_MH_SLAB_001",
+      "title": "Maharashtra PT Slab - 10001 to 15000",
+      "category": "pt_slab",
+      "value": 150,
+      "unit": "INR_PER_MONTH",
+      "description": "Maharashtra PT: salary 10,001–15,000 = ₹150/month",
+      "effective_date": "2026-01-01",
+      "applies_to": ["MAHARASHTRA_EMPLOYERS"],
+      "state": "MH"
+    },
+    {
+      "id": "PT_MH_SLAB_002",
+      "title": "Maharashtra PT Slab - Above 15000",
+      "category": "pt_slab",
+      "value": 200,
+      "unit": "INR_PER_MONTH",
+      "description": "Maharashtra PT: salary above ₹15,000 = ₹200/month",
+      "effective_date": "2026-01-01",
+      "applies_to": ["MAHARASHTRA_EMPLOYERS"],
+      "state": "MH"
+    },
+    {
+      "id": "PT_KA_SLAB_001",
+      "title": "Karnataka PT Slab - Above 15000",
+      "category": "pt_slab",
+      "value": 200,
+      "unit": "INR_PER_MONTH",
+      "description": "Karnataka PT: salary above ₹15,000 = ₹200/month",
+      "effective_date": "2026-01-01",
+      "applies_to": ["KARNATAKA_EMPLOYERS"],
+      "state": "KA"
+    },
+    {
+      "id": "PT_WB_SLAB_001",
+      "title": "West Bengal PT Slab - 10001 to 15000",
+      "category": "pt_slab",
+      "value": 110,
+      "unit": "INR_PER_MONTH",
+      "description": "West Bengal PT: salary 10,001–15,000 = ₹110/month",
+      "effective_date": "2026-01-01",
+      "applies_to": ["WEST_BENGAL_EMPLOYERS"],
+      "state": "WB"
+    }
+  ]
+}

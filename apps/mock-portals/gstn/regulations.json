@@ -1,0 +1,52 @@
+{
+  "portal": "GSTN Mock Portal",
+  "version": "1.0.0",
+  "last_updated": "2026-05-08T00:00:00Z",
+  "hash_check": "v1_gstn_initial",
+  "regulations": [
+    {
+      "id": "GST_LATE_FEE_001",
+      "title": "GST Late Fee Cap",
+      "category": "late_fee",
+      "value": 500,
+      "unit": "INR",
+      "description": "Maximum late fee per return for GSTR-3B filing after due date",
+      "effective_date": "2026-01-01",
+      "applies_to": ["GST_REGISTERED"],
+      "state": "ALL"
+    },
+    {
+      "id": "GST_SLAB_001",
+      "title": "Standard GST Rate",
+      "category": "tax_slab",
+      "value": 18,
+      "unit": "PERCENT",
+      "description": "Standard GST rate for services",
+      "effective_date": "2026-01-01",
+      "applies_to": ["GST_REGISTERED"],
+      "state": "ALL"
+    },
+    {
+      "id": "GST_THRESHOLD_001",
+      "title": "GST Registration Threshold",
+      "category": "threshold",
+      "value": 2000000,
+      "unit": "INR",
+      "description": "Annual turnover above which GST registration is mandatory",
+      "effective_date": "2026-01-01",
+      "applies_to": ["ALL_BUSINESSES"],
+      "state": "ALL"
+    },
+    {
+      "id": "GST_DUE_DATE_001",
+      "title": "GSTR-3B Due Date",
+      "category": "due_date",
+      "value": 20,
+      "unit": "DAY_OF_MONTH",
+      "description": "Monthly GSTR-3B must be filed by the 20th of following month",
+      "effective_date": "2026-01-01",
+      "applies_to": ["GST_REGISTERED"],
+      "state": "ALL"
+    }
+  ]
+}
