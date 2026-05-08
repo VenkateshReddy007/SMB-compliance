@@ -1,0 +1,36 @@
+[
+  {
+    "id": "scenario_a",
+    "name": "GST Late Fee Cap Reduction",
+    "portal": "gstn",
+    "regulation_id": "GST_LATE_FEE_001",
+    "field": "value",
+    "old_value": 500,
+    "new_value": 250,
+    "expected_affected_businesses": ["Spice Garden Foods", "DataPulse Tech", "TechNova Solutions", "Bengal Sweets", "Sunrise Pharma", "CloudBase Systems", "Urban Logistics Co", "Fresh Farm Foods"],
+    "expected_cascade": ["FSSAI_ANNUAL_RETURN check for food businesses", "GST_TDS_DEDUCTION recalculation"],
+    "demo_narrative": "GST late fee reduced from ₹500 to ₹250. 8 businesses affected. FSSAI cascade triggered for 3 food businesses."
+  },
+  {
+    "id": "scenario_b",
+    "name": "PF Wage Ceiling Increase",
+    "portal": "epfo",
+    "regulation_id": "PF_WAGE_CEILING_001",
+    "field": "value",
+    "old_value": 15000,
+    "new_value": 18000,
+    "expected_affected_businesses": ["all PF-registered businesses (12 of 18)"],
+    "demo_narrative": "PF wage ceiling raised to ₹18,000. All PF-registered businesses now owe higher monthly challan."
+  },
+  {
+    "id": "scenario_c",
+    "name": "FSSAI Annual Return Deadline Change",
+    "portal": "fssai",
+    "regulation_id": "FSSAI_ANNUAL_RETURN_001",
+    "field": "value",
+    "old_value": "31_MAY",
+    "new_value": "30_APRIL",
+    "expected_affected_businesses": ["all FSSAI-registered food businesses (7 of 18)"],
+    "demo_narrative": "FSSAI annual return deadline moved to April 30. 7 food businesses must file earlier."
+  }
+]

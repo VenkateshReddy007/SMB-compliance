@@ -109,6 +109,33 @@ def main():
                 insert_caal_entries(cur, audit_entries)
                 print(f"Inserted CAAL entries: {len(audit_entries)}")
 
+                # Create HITL divergence for Bharat Finserv
+                import uuid
+                from datetime import datetime, timezone
+                bharat = next((u for u in users if u["name"] == "Bharat Finserv"), None)
+                if bharat:
+                    query = """
+                    INSERT INTO hitl_queue (
+                        id, business_id, action_type, rail_a_response, rail_b_response,
+                        divergence_reason, confidence_score, status, escalated_at
+                    ) VALUES (
+                        %(id)s, %(business_id)s, %(action_type)s, %(rail_a_response)s, %(rail_b_response)s,
+                        %(divergence_reason)s, %(confidence_score)s, %(status)s, %(escalated_at)s
+                    ) ON CONFLICT (id) DO NOTHING
+                    """
+                    cur.execute(query, {
+                        "id": str(uuid.uuid4()),
+                        "business_id": bharat["id"],
+                        "action_type": "drca_divergence",
+                        "rail_a_response": Json({"amount": 300, "source": "LLM Analysis", "confidence": 0.4}),
+                        "rail_b_response": Json({"amount": 250, "source": "Deterministic Rule", "confidence": 1.0}),
+                        "divergence_reason": "Rail A calculated ₹300 late fee, but Rail B (Rule Engine) calculated ₹250. Ambiguous rule interaction detected.",
+                        "confidence_score": 0.45,
+                        "status": "pending",
+                        "escalated_at": datetime.now(timezone.utc)
+                    })
+                    print("Inserted HITL divergence for Bharat Finserv.")
+
         print("Seeding completed successfully.")
     finally:
         conn.close()

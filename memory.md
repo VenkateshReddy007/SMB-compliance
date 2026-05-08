@@ -303,6 +303,32 @@ Validation:
 - `npm run lint` passes in `apps/web`.
 - `python -m compileall services/api` passes.
 
+### Task: PHASE 6 Prompt 6.1 to 6.3 - Integration + Demo Polish
+**Status:** Completed  
+**Date:** 2026-05-08
+
+Implemented:
+1. Core API Wiring:
+   - Added `clerk_auth.py` middleware to check JWT tokens for all protected API routes.
+   - Updated `main.py` startup logic to explicitly initialize `ObligationGraphBuilder`, `RegulationVectorStore`, `RuleEngine`, attach them to `app.state`, and log start up metrics. Also added DB auto-seeder if `businesses` table is empty.
+   - Refactored `admin/demo/trigger-change` endpoint to save mock overrides to Redis. Immediately triggers the `IRDAOrchestrator` cycle to skip the scheduler interval.
+   - Created `/knowledge/graph` and `/knowledge/rag/stats` endpoints in a new `knowledge.py` router.
+   - Updated `watcher.py` to check Redis before doing a local/remote HTTP fetch.
+2. Demo Content & Orchestration:
+   - Created `demo_scenarios.json` with three predefined test cases (GST Late Fee, PF Wage Ceiling, FSSAI Deadline).
+   - Created `/demo` router to fetch scenarios, run them, and reset demo state (flush Redis and local tables).
+   - Hardcoded a HITL queue trigger entry in `seed_db.py` for "Bharat Finserv" to demonstrate the manual escalation flow natively.
+3. Frontend Enhancements:
+   - Built a dedicated `/kg-explorer` page utilizing the full-screen `KGVisualization` component.
+   - Built the `/admin/demo-control` UI to display 3 scenarios and track execution progress visually.
+   - Added a global "Demo Mode" banner to the Dashboard (`page.tsx`) header.
+4. Infrastructure & Deployment:
+   - Configured `docker-compose.yml` to run `postgres`, `redis`, `api`, and `scheduler`.
+   - Built a custom `Dockerfile` for the FastAPI backend.
+   - Added `vercel.json` and `package.json` configurations to all 4 mock portals to enable 1-click deployments.
+   - Wrote `setup.sh` to scaffold the entire project from scratch and run seeds.
+   - Generated the central `README.md` containing architectural overviews and the demo execution path.
+
 ## How To Use This Memory File
 
 - Append a new section under **Implementation Log** after each task.

@@ -6,7 +6,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from database import Base, engine
+from starlette.middleware.base import BaseHTTPMiddleware
+from database import Base, engine, AsyncSessionLocal, Business
 from routers.admin import router as admin_router
 from routers.assistant import router as assistant_router
 from routers.audit import router as audit_router
@@ -16,11 +17,20 @@ from routers.hitl import router as hitl_router
 from routers.knowledge import router as knowledge_router
 from routers.obligations import router as obligations_router
 from routers.payroll import router as payroll_router
-from websocket.retrigger_ws import router as websocket_router
+from routers.demo import router as demo_router
+from websocket.retrigger_ws import router as websocket_router, manager
+from middleware.clerk_auth import clerk_auth_middleware
+from services.knowledge.obligation_graph.graph_builder import ObligationGraphBuilder
+from services.knowledge.rag.vector_store import RegulationVectorStore
+from services.knowledge.rule_engine import RuleEngine
+from scheduler.polling_jobs import SchedulerJobs
+from sqlalchemy import select
+from pathlib import Path
+import subprocess
+import sys
 
 app = FastAPI(title="RegGraph AI API", version="0.1.0")
-scheduler = AsyncIOScheduler()
-obligation_graph = nx.DiGraph()
+app.add_middleware(BaseHTTPMiddleware, dispatch=clerk_auth_middleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,21 +41,38 @@ app.add_middleware(
 )
 
 
-def _load_obligation_graph() -> None:
-    obligation_graph.clear()
-    obligation_graph.add_nodes_from(["GST", "PF", "ESI", "FSSAI", "PT", "TDS"])
-    obligation_graph.add_edge("PF", "ESI")
-    obligation_graph.add_edge("GST", "TDS")
-    obligation_graph.add_edge("FSSAI", "GST")
-
-
 @app.on_event("startup")
 async def startup_event() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    if not scheduler.running:
-        scheduler.start()
-    _load_obligation_graph()
+    
+    graph_builder = ObligationGraphBuilder()
+    graph_builder.build_graph()
+    app.state.obligation_graph = graph_builder.graph
+    
+    persist_dir = Path(__file__).resolve().parent.parent / "chroma_db"
+    vector_store = RegulationVectorStore(str(persist_dir))
+    
+    rule_engine = RuleEngine()
+    app.state.rule_engine = rule_engine
+    
+    app.state.ws_manager = manager
+    
+    scheduler_jobs = SchedulerJobs(graph_builder, manager)
+    scheduler_jobs.start()
+    app.state.scheduler = scheduler_jobs
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Business))
+        businesses = result.scalars().all()
+        if not businesses:
+            seed_script = Path(__file__).resolve().parent.parent.parent / "data" / "seed" / "seed_db.py"
+            if seed_script.exists():
+                subprocess.run([sys.executable, str(seed_script)], check=False)
+                result = await session.execute(select(Business))
+                businesses = result.scalars().all()
+
+    print(f"RGAI Backend initialized. Graph nodes: {graph_builder.graph.number_of_nodes()}. Regulations embedded: {vector_store.collection.count()}. Businesses: {len(businesses)}.")
 
 
 app.include_router(compliance_router)
@@ -57,6 +84,7 @@ app.include_router(audit_router)
 app.include_router(assistant_router)
 app.include_router(admin_router)
 app.include_router(knowledge_router)
+app.include_router(demo_router)
 app.include_router(websocket_router)
 
 

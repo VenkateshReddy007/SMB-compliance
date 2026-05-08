@@ -1,10 +1,8 @@
-version: "3.9"
+version: '3.8'
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: rgai-postgres
-    restart: unless-stopped
     environment:
       POSTGRES_DB: regraph
       POSTGRES_USER: rguser
@@ -13,31 +11,52 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rguser -d regraph"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
   redis:
     image: redis:7-alpine
-    container_name: rgai-redis
-    restart: unless-stopped
     ports:
       - "6379:6379"
+    command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: rgai-pgadmin
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@regraph.ai
-      PGADMIN_DEFAULT_PASSWORD: admin123
+  
+  api:
+    build: ./services/api
     ports:
-      - "5050:80"
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://rguser:rgpass123@postgres:5432/regraph
+      - SYNC_DATABASE_URL=postgresql://rguser:rgpass123@postgres:5432/regraph
+      - REDIS_URL=redis://redis:6379
+      - GROQ_API_KEY=${GROQ_API_KEY}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - ./chroma_db:/app/chroma_db
+      - ./data:/app/data
+      - ./services/api:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+  
+  scheduler:
+    build: ./services/api
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://rguser:rgpass123@postgres:5432/regraph
+      - SYNC_DATABASE_URL=postgresql://rguser:rgpass123@postgres:5432/regraph
+      - REDIS_URL=redis://redis:6379
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    command: python -c "from scheduler.polling_jobs import SchedulerJobs; from websocket.retrigger_ws import manager; from services.knowledge.obligation_graph.graph_builder import ObligationGraphBuilder; builder = ObligationGraphBuilder(); builder.build_graph(); s = SchedulerJobs(builder, manager); s.start(); import asyncio; asyncio.get_event_loop().run_forever()"
+    depends_on:
+      api:
+        condition: service_started
 
 volumes:
   postgres_data:
   redis_data:
-  pgadmin_data:

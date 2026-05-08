@@ -158,6 +158,13 @@ async def seed_demo_data():
 
 @router.post("/demo/trigger-change")
 async def trigger_change(payload: TriggerChangeRequest, db: AsyncSession = Depends(get_db)):
+    import redis
+    import json
+    from fastapi import Request
+    from services.agents.irda.orchestrator import IRDAOrchestrator
+    from services.knowledge.obligation_graph.graph_builder import ObligationGraphBuilder
+
+    # Fetch current file or HTTP, for demo we just read the local file
     portal_file = _mock_portal_path(payload.portal)
     if not portal_file.exists():
         raise HTTPException(status_code=404, detail="Portal file not found")
@@ -176,40 +183,36 @@ async def trigger_change(payload: TriggerChangeRequest, db: AsyncSession = Depen
 
     content["last_updated"] = datetime.now(timezone.utc).isoformat()
     content["hash_check"] = f"manual_{uuid4().hex[:10]}"
-    portal_file.write_text(json.dumps(content, indent=2), encoding="utf-8")
 
-    delta_summary = {
-        "changes": [
-            {
-                "regulation_id": payload.regulation_id,
-                "field_changed": payload.field,
-                "old_value": old_value,
-                "new_value": payload.new_value,
-                "impact_category": "financial" if payload.field in {"value", "amount"} else "procedural",
-            }
-        ]
+    # Write to Redis
+    r = redis.Redis(host="localhost", port=6379, db=0)
+    try:
+        r.set(f"portal_override:{payload.portal}", json.dumps(content))
+    except Exception as e:
+        print(f"Warning: Could not connect to redis for override. {e}")
+        # Fallback to file override for local testing if redis isn't running
+        portal_file.write_text(json.dumps(content, indent=2), encoding="utf-8")
+
+    # Immediately run IRDA watcher cycle
+    irda = IRDAOrchestrator()
+    graph_builder = ObligationGraphBuilder()
+    graph_builder.build_graph()
+    
+    # We need ws_manager from app state
+    # A bit of a hack to get app, but typically it's better passed. 
+    # For now we can just import manager
+    from websocket.retrigger_ws import manager
+
+    await irda.run_cycle(db, graph_builder, manager)
+    
+    # The delta is processed in run_cycle. Let's find it.
+    delta = await db.scalar(select(RegulationDelta).order_by(RegulationDelta.detected_at.desc()).limit(1))
+    
+    return {
+        "status": "triggered", 
+        "delta_id": str(delta.id) if delta else None,
+        "affected_businesses": delta.affected_business_count if delta else 0
     }
-
-    delta = RegulationDelta(
-        portal_name=payload.portal,
-        previous_hash="unknown",
-        new_hash=content["hash_check"],
-        changed_regulation_ids=[payload.regulation_id],
-        delta_summary=delta_summary,
-        affected_business_count=8,
-        processed=False,
-    )
-    db.add(delta)
-    await db.commit()
-    await db.refresh(delta)
-
-    await broadcast_regulation_change(
-        portal=payload.portal,
-        affected_count=8,
-        delta_id=str(delta.id),
-        message=f"{payload.regulation_id} changed — 8 businesses affected",
-    )
-    return {"status": "ok", "delta_id": str(delta.id)}
 
 
 @router.get("/users")
