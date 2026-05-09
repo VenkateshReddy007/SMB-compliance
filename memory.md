@@ -471,6 +471,15 @@ Implemented:
    - The `business.__dict__` passed into the payload contained a non-serializable SQLAlchemy internal state (`_sa_instance_state`) and Python `UUID` objects.
    - Implemented a parser to strip internal states and convert `UUID` and `datetime` objects to strings, allowing Postgres to successfully insert the `JSONB` audit trail.
 
+### Task: PHASE 15 - Groq AI Assistant Fixes
+**Status:** Completed  
+**Date:** 2026-05-09
+
+Implemented:
+1. **Removed Gemini Dependencies**: Cleaned up remaining Gemini references across the codebase to finalize the Groq migration. Removed `gemini-2.0-flash` and `GEMINI_API_KEY` from `.env`, `config.py`, and `docker-compose.yml`. Removed unused `google-generativeai` and `langchain-google-genai` dependencies from `requirements.txt`.
+2. **Groq Client Fix**: Updated `services/knowledge/rag/groq_client.py` to dynamically read `settings.groq_model` instead of hardcoding the Llama model.
+3. **Frontend UI Update**: Updated the Assistant chat interface (`apps/web/app/(dashboard)/assistant/page.tsx`) to display 'Model: Groq LLaMA + DRCA'.
+
 ## How To Use This Memory File
 
 - Append a new section under **Implementation Log** after each task.

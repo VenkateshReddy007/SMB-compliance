@@ -12,28 +12,37 @@ import { CheckCircle2, XCircle, Download } from "lucide-react";
 
 type Business = { id: string; name: string; gst_registered?: boolean };
 
-function MiniCalendar({ dueDates = [] }: { dueDates: { date: number; title: string; type: string }[] }) {
+function MiniCalendar({ dueDates = [], period }: { dueDates: { date: number; title: string; type: string }[], period: string }) {
+  const [yearStr, monthStr] = period.split("-");
+  const year = parseInt(yearStr, 10);
+  const monthIdx = parseInt(monthStr, 10) - 1;
+  const displayDate = new Date(year, monthIdx, 1);
+  const monthName = displayDate.toLocaleString("default", { month: "long" });
+  const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
   const now = new Date();
-  const month = now.toLocaleString("default", { month: "long" });
-  const year = now.getFullYear();
-  const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
 
   return (
     <div>
-      <div className="text-xs font-mono text-white/40 mb-2">{month} {year}</div>
+      <div className="text-xs font-mono text-white/40 mb-2">{monthName} {year}</div>
       <div className="grid grid-cols-7 gap-1">
         {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
           <div key={i} className="text-[9px] font-mono text-white/20 text-center">{d}</div>
         ))}
-        {Array.from({ length: new Date(year, now.getMonth(), 1).getDay() }, (_, i) => (
+        {Array.from({ length: new Date(year, monthIdx, 1).getDay() }, (_, i) => (
           <div key={`empty-${i}`} />
         ))}
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = i + 1;
-          const isToday = day === now.getDate();
-          const daysUntil = day - now.getDate();
-          const isUpcoming = daysUntil > 0 && daysUntil <= 7;
-          const isPast = day < now.getDate();
+          const isToday = year === now.getFullYear() && monthIdx === now.getMonth() && day === now.getDate();
+          
+          let isUpcoming = false;
+          let isPast = false;
+          const cellDate = new Date(year, monthIdx, day);
+          const diffTime = cellDate.getTime() - now.getTime();
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          
+          if (diffDays < 0) isPast = true;
+          else if (diffDays > 0 && diffDays <= 7) isUpcoming = true;
 
           // Check if this day is a due date
           const dueItem = dueDates.find((d) => d.date === day);
@@ -88,11 +97,11 @@ export default function GSTFilingPage() {
 
   useEffect(() => {
     if (!selected) return;
-    api.post(`/gst/filing-status/${selected}/compute`).then(setStatus);
+    api.post(`/gst/filing-status/${selected}/compute?period=${period}`).then(setStatus);
     api.get<any[]>("/gst/due-dates").then((dates) => {
       // Filter dates for this business and extract the day of the month
       const businessDates = dates
-        .filter((d) => d.business_id === selected && d.due_date)
+        .filter((d) => d.business_id === selected && d.due_date && d.due_date.startsWith(period))
         .map((d) => ({
           date: parseInt(d.due_date.split("-")[2], 10),
           title: d.title,
@@ -100,11 +109,11 @@ export default function GSTFilingPage() {
         }));
       setCalendarDates(businessDates);
     });
-  }, [api, selected]);
+  }, [api, selected, period]);
 
   const doExport = async () => {
     if (!selected) return;
-    const data = await api.get<any>(`/gst/export/${selected}`);
+    const data = await api.get<any>(`/gst/export/${selected}?period=${period}`);
     setExportJson(JSON.stringify(data, null, 2));
   };
 
@@ -194,7 +203,7 @@ export default function GSTFilingPage() {
         <Card className="glass border-white/[0.06] p-5">
           <div className="text-[10px] font-mono text-white/30 tracking-widest uppercase">Due Dates Calendar</div>
           <div className="mt-4">
-            <MiniCalendar dueDates={calendarDates} />
+            <MiniCalendar dueDates={calendarDates} period={period} />
           </div>
         </Card>
       </div>

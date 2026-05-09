@@ -11,11 +11,16 @@ class GSTReadinessChecker:
             )
         ).all()
         
-        if not obligations:
+        filtered_obs = [
+            o for o in obligations 
+            if o.due_date and (o.due_date.strftime("%Y-%m") == period or o.status == "overdue")
+        ]
+        
+        if not filtered_obs:
             return 100.0 if business and business.gst_registered else 0.0
 
-        total_obs = len(obligations)
-        compliant_obs = sum(1 for o in obligations if o.status == "compliant")
+        total_obs = len(filtered_obs)
+        compliant_obs = sum(1 for o in filtered_obs if o.status == "compliant")
         
         score = (compliant_obs / total_obs) * 100.0
         return float(min(100.0, score))
@@ -26,11 +31,17 @@ class GSTReadinessChecker:
                 select(Obligation).where(and_(Obligation.business_id == business_id, Obligation.domain == "GST"))
             )
         ).all()
+        
+        filtered_obs = [
+            o for o in obligations 
+            if o.due_date and (o.due_date.strftime("%Y-%m") == period or o.status == "overdue")
+        ]
+        
         return [
             {
                 "item": o.title,
                 "status": o.status,
                 "instructions": f"Complete '{o.title}' before {o.due_date}" if o.due_date else "Complete as per GST schedule",
             }
-            for o in obligations
+            for o in filtered_obs
         ]

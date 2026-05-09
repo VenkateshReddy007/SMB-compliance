@@ -47,10 +47,11 @@ def _deterministic_financials(business_id: UUID) -> tuple[Decimal, Decimal, Deci
     return Decimal(liability), Decimal(itc), Decimal(net)
 
 @router.post("/filing-status/{business_id}/compute")
-async def compute_filing_status(business_id: UUID, db: AsyncSession = Depends(get_db)):
+async def compute_filing_status(business_id: UUID, period: str | None = None, db: AsyncSession = Depends(get_db)):
+    target_period = period or _current_period()
     # Get dynamic score and checklist from the checker
-    score = await checker.compute_readiness_score(str(business_id), _current_period(), db, {})
-    checklist = await checker.get_filing_checklist(str(business_id), _current_period(), db)
+    score = await checker.compute_readiness_score(str(business_id), target_period, db, {})
+    checklist = await checker.get_filing_checklist(str(business_id), target_period, db)
     
     # Identify missing items
     missing_items = [item["item"] for item in checklist if item["status"] in ["pending", "overdue"]]
@@ -61,7 +62,7 @@ async def compute_filing_status(business_id: UUID, db: AsyncSession = Depends(ge
 
     status = GSTFilingStatus(
         business_id=business_id,
-        period=_current_period(),
+        period=target_period,
         readiness_score=Decimal(score),
         missing_items=missing_items,
         total_gst_liability=liability,
@@ -80,7 +81,8 @@ async def compute_filing_status(business_id: UUID, db: AsyncSession = Depends(ge
 
 
 @router.get("/export/{business_id}")
-async def export_gst_payload(business_id: UUID, db: AsyncSession = Depends(get_db)):
+async def export_gst_payload(business_id: UUID, period: str | None = None, db: AsyncSession = Depends(get_db)):
+    target_period = period or _current_period()
     business = await db.get(Business, business_id)
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
@@ -91,7 +93,7 @@ async def export_gst_payload(business_id: UUID, db: AsyncSession = Depends(get_d
     return {
         "business_id": str(business.id),
         "gstin": business.gstin,
-        "period": _current_period(),
+        "period": target_period,
         "returns": {"gstr3b": {"taxable_value": taxable_value, "tax_liability": float(liability), "itc": float(itc), "net_payable": float(net)}},
         "generated_at": date.today().isoformat(),
     }
