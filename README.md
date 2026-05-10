@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/RegGraph_AI-Autonomous_Compliance_OS-f97316?style=for-the-badge&labelColor=0a0800" alt="RegGraph AI" />
 </p>
 
-<h1 align="center">⚡ RegGraph AI — Autonomous Compliance OS</h1>
+<h1 align="center">RegGraph AI — Autonomous Compliance OS</h1>
 
 <p align="center">
   <strong>An agentic, dual-rail AI platform that autonomously monitors Indian regulatory portals, detects changes, cascades obligation updates, and escalates to humans — all before the deadline.</strong>
