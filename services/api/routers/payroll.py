@@ -36,19 +36,24 @@ async def compute_payroll(business_id: UUID, db: AsyncSession = Depends(get_db))
     Salaries are deterministically simulated per business_id until an ERP integration is available."""
     import hashlib
     from services.agents.payroll_agent.calculator import PayrollCalculator
+    from database import Business
 
     today = date.today()
     period = _period_from_date(today)
 
-    # Deterministic salary simulation per business (consistent across refreshes)
-    seed = int(hashlib.md5(str(business_id).encode()).hexdigest(), 16)
-    employee_count = 3 + (seed % 5)  # 3-7 employees
-    base_salaries = [15000 + ((seed >> (i * 4)) % 25000) for i in range(employee_count)]
+    # Fetch the actual business profile for employee_count and state
+    business = await db.get(Business, business_id)
+    emp_count = business.employee_count if business and business.employee_count else 5
+    state = business.state if business and business.state else "MH"
 
-    # Use the PayrollCalculator rule engine
+    # Use the PayrollCalculator rule engine with business-specific data
     calculator = PayrollCalculator()
     portal_data = {}  # Will use live portal rates when EPFO portal is wired in
-    result = await calculator.compute_monthly_obligations(str(business_id), period, db, portal_data)
+    result = await calculator.compute_monthly_obligations(
+        str(business_id), period, db, portal_data,
+        employee_count=emp_count,
+        state=state,
+    )
 
     # Persist or update the PayrollDues row for this business/period
     existing = await db.scalar(

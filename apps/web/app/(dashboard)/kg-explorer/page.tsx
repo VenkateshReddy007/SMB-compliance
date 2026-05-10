@@ -41,12 +41,12 @@ export default function KGExplorerPage() {
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="glass px-4 py-2 rounded-lg text-sm flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="glass px-4 py-2 rounded-lg text-sm flex items-center gap-2 border border-orange-500/20">
+            <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
             Graph Nodes: {graphData?.nodes.length || 0}
           </div>
-          <div className="glass px-4 py-2 rounded-lg text-sm flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+          <div className="glass px-4 py-2 rounded-lg text-sm flex items-center gap-2 border border-amber-500/20">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
             ChromaDB Regulations: {stats?.count || 0}
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function KGExplorerPage() {
               placeholder="Search nodes..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-white/20 transition-colors"
+              className="w-full bg-white/5 border border-orange-500/20 rounded-lg px-3 py-2 text-sm outline-none focus:border-orange-500/50 transition-colors"
             />
           </div>
 

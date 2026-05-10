@@ -480,6 +480,23 @@ Implemented:
 2. **Groq Client Fix**: Updated `services/knowledge/rag/groq_client.py` to dynamically read `settings.groq_model` instead of hardcoding the Llama model.
 3. **Frontend UI Update**: Updated the Assistant chat interface (`apps/web/app/(dashboard)/assistant/page.tsx`) to display 'Model: Groq LLaMA + DRCA'.
 
+### Task: PHASE 16 - GST Filing & Admin UI Fixes
+**Status:** Completed  
+**Date:** 2026-05-09
+
+Implemented:
+1. **GST Filing Date Synchronization (`services/api/routers/gst.py` & `gst_agent/readiness_checker.py`)**:
+   - Fixed a bug where the Filing Readiness Score and Calendar ignored the UI selected "Period".
+   - The backend `/compute` endpoint now accepts an optional `period` query parameter.
+   - The `GSTReadinessChecker` dynamically filters Obligations so that it correctly computes a score based on the selected month, while also factoring in un-cleared `overdue` obligations from past months.
+2. **Demo Seed Script (`seed_demo_data.py`)**:
+   - Wrote and executed a script to inject distinct edge-case businesses (e.g., a fully compliant tech startup, a highly non-compliant manufacturing firm, and an unregistered freelancer) into the local database to better demonstrate system capabilities without manual data entry.
+3. **Admin Portal Breach Simulation (`services/api/routers/admin.py`)**:
+   - Fixed a bug where the "Simulate Breach Detection" button was silently failing (HTTP 422).
+   - Refactored the `POST /admin/dpdp/simulate-breach` endpoint to accept the `business_id` inside a JSON body via a Pydantic `BaseModel`, rather than expecting a URL query parameter, matching the React frontend's behavior.
+4. **GST UI Adjustments (`apps/web/app/(dashboard)/gst-filing/page.tsx`)**:
+   - Removed the `ConfidenceScore` graph component from the GST page as requested, adjusting the CSS Grid to perfectly center and expand the remaining summary cards.
+
 ## How To Use This Memory File
 
 - Append a new section under **Implementation Log** after each task.

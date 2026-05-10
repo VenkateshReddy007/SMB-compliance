@@ -29,6 +29,10 @@ class TriggerChangeRequest(BaseModel):
     new_value: object
 
 
+class SimulateBreachRequest(BaseModel):
+    business_id: str
+
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
@@ -334,11 +338,12 @@ async def dpdp_stats(db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/dpdp/simulate-breach")
-async def simulate_breach(business_id: str, db: AsyncSession = Depends(get_db)):
+async def simulate_breach(payload: SimulateBreachRequest, db: AsyncSession = Depends(get_db)):
     global _LAST_BREACH_CHECK_AT
     detector = BreachDetector()
-    breach = detector.simulate_breach_detection(business_id)
+    business_id_str = str(payload.business_id)
+    breach = detector.simulate_breach_detection(business_id_str)
     _LAST_BREACH_CHECK_AT = datetime.now(timezone.utc)
-    business = await db.get(Business, business_id)
+    business = await db.get(Business, payload.business_id)
     msg = detector.draft_dpb_notification(breach, {"name": business.name if business else "Business"})
     return {"breach_details": breach, "notification_text": msg, "last_breach_check_at": _LAST_BREACH_CHECK_AT.isoformat()}

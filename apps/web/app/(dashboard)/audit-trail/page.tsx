@@ -19,6 +19,11 @@ const AGENT_COLORS: Record<string, string> = {
   hitl: "bg-amber-500/10 text-amber-400 border-amber-500/15",
   gst: "bg-cyan-500/10 text-cyan-400 border-cyan-500/15",
   payroll: "bg-pink-500/10 text-pink-400 border-pink-500/15",
+  railaclassifier: "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/15",
+  railbverifier: "bg-indigo-500/10 text-indigo-400 border-indigo-500/15",
+  deltawatcher: "bg-orange-500/10 text-orange-400 border-orange-500/15",
+  rulesengine: "bg-rose-500/10 text-rose-400 border-rose-500/15",
+  hitlresolver: "bg-amber-500/10 text-amber-400 border-amber-500/15",
 };
 
 function agentBadge(name: string) {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bell,
   Calendar,
@@ -48,12 +48,66 @@ function AgentStatusIndicator({ running }: { running: boolean }) {
       <span
         className={cn(
           "h-2.5 w-2.5 rounded-full",
-          running ? "bg-emerald-400 animate-dot-pulse shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-white/20"
+          running ? "bg-orange-400 animate-dot-pulse shadow-[0_0_8px_rgba(249,115,22,0.5)]" : "bg-white/20"
         )}
       />
       <span className="tracking-wider">{running ? "AGENTS ACTIVE" : "AGENTS IDLE"}</span>
     </div>
   );
+}
+
+function ParticleCanvas() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d")!;
+    let raf: number;
+    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    const N = 60;
+    const particles = Array.from({ length: N }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.4 + 0.15,
+    }));
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 160) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(249,115,22,${0.12 * (1 - dist / 160)})`;
+            ctx.lineWidth = 0.7;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      particles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(249,115,22,${p.alpha})`;
+        ctx.fill();
+        p.x += p.dx; p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(raf); observer.disconnect(); };
+  }, []);
+  return <canvas ref={ref} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -103,19 +157,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       : null;
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-white">
+    <div className="relative min-h-screen bg-[#080600] text-white">
+      {/* ── Persistent particle background ── */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <ParticleCanvas />
+        <div className="absolute top-0 right-0 w-[50vw] h-[50vh] bg-gradient-radial from-orange-500/6 via-amber-500/3 to-transparent blur-3xl" />
+        <div className="absolute bottom-0 left-[240px] w-[40vw] h-[35vh] bg-gradient-radial from-orange-600/5 to-transparent blur-3xl" />
+        {/* Right-edge accent bars from the reference design */}
+        <div className="absolute top-0 right-0 w-[2px] h-full bg-gradient-to-b from-orange-500/30 via-amber-400/15 to-transparent" />
+        <div className="absolute top-0 right-[5px] w-[1px] h-[55%] bg-gradient-to-b from-amber-400/20 to-transparent" />
+      </div>
       <RetriggerBanner event={bannerEvent} />
       <div className="flex">
         {/* ─── Sidebar ─── */}
-        <aside className="fixed inset-y-0 left-0 z-30 w-[240px] border-r border-white/[0.06] bg-[#0d1017]/80 backdrop-blur-xl">
+        <aside className="fixed inset-y-0 left-0 z-30 w-[240px] border-r border-orange-500/10 bg-gradient-to-b from-[#0e0900]/95 to-[#080600]/95 backdrop-blur-xl">
           <div className="px-4 py-5">
             <div className="flex items-center gap-3">
-              <div className="relative h-9 w-9 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/20 flex items-center justify-center">
-                <Activity className="h-4 w-4 text-blue-400" />
+              <div className="relative h-9 w-9 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 flex items-center justify-center">
+                <Activity className="h-4 w-4 text-orange-400" />
                 <div className="absolute inset-0 rounded-lg animate-pulse-glow opacity-40" />
               </div>
               <div>
-                <div className="text-sm font-semibold leading-none tracking-tight">RegGraph AI</div>
+                <div className="text-sm font-semibold leading-none tracking-tight text-gradient-primary font-bold">RegGraph AI</div>
                 <div className="mt-0.5 text-[10px] font-mono text-white/40 tracking-widest uppercase">Compliance OS</div>
               </div>
             </div>
@@ -131,16 +194,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   key={href}
                   href={href}
                   className={cn(
-                    "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200",
+                    "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-300",
                     isActive
-                      ? "bg-blue-500/10 text-white border border-blue-500/15"
-                      : "text-white/50 hover:text-white/80 hover:bg-white/[0.03] border border-transparent"
+                      ? "bg-gradient-to-r from-orange-500/15 to-amber-500/10 text-white border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
+                      : "text-white/50 hover:text-white/90 hover:bg-orange-500/[0.04] border border-transparent"
                   )}
                 >
                   <Icon
                     className={cn(
-                      "h-4 w-4 transition-colors",
-                      isActive ? "text-blue-400" : "text-white/40 group-hover:text-white/60"
+                      "h-4 w-4 transition-all duration-300",
+                      isActive ? "text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]" : "text-white/40 group-hover:text-orange-300/70"
                     )}
                   />
                   <span className="font-medium">{label}</span>
@@ -167,8 +230,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </aside>
 
         {/* ─── Main ─── */}
-        <div className="ml-[240px] flex min-h-screen w-[calc(100%-240px)] flex-col">
-          <header className="sticky top-0 z-20 border-b border-white/[0.06] bg-[#0a0d14]/80 backdrop-blur-xl">
+        <div className="relative z-10 ml-[240px] flex min-h-screen w-[calc(100%-240px)] flex-col">
+          <header className="sticky top-0 z-20 border-b border-orange-500/10 bg-[#080600]/80 backdrop-blur-xl">
             <div className="flex items-center justify-between px-6 py-3">
               <div className="flex items-center gap-5">
                 <AgentStatusIndicator running={ws.isConnected} />
@@ -183,7 +246,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <button className="relative rounded-lg p-2 hover:bg-white/[0.04] transition-colors">
                   <Bell className="h-4 w-4 text-white/50" />
                   {badges.alerts > 0 && (
-                    <span className="absolute -right-0.5 -top-0.5 h-4 min-w-4 rounded-full bg-blue-500 px-1 text-[10px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_rgba(59,130,246,0.4)]">
+                    <span className="absolute -right-0.5 -top-0.5 h-4 min-w-4 rounded-full bg-orange-500 px-1 text-[10px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_rgba(249,115,22,0.4)]">
                       {badges.alerts}
                     </span>
                   )}

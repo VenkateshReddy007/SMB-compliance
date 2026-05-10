@@ -100,11 +100,14 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Demo Mode Banner */}
-      <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 px-4 py-3 flex items-center gap-3">
-        <span className="text-xl">🎯</span>
-        <div className="flex-1">
-          <p className="text-sm font-medium text-blue-400">Demo Mode</p>
-          <p className="text-xs text-white/60">Use the Admin Panel to trigger regulation changes and watch the Autonomous OS react in real time.</p>
+      <div className="relative overflow-hidden rounded-xl border border-orange-500/30 bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-orange-500/10 px-5 py-4 shadow-[0_0_20px_rgba(249,115,22,0.15)] animate-shimmer">
+        <div className="absolute inset-0 bg-white/[0.02]" />
+        <div className="relative flex items-center gap-4">
+          <span className="text-2xl animate-pulse">🎯</span>
+          <div className="flex-1">
+            <p className="text-sm font-bold text-orange-400 uppercase tracking-wider">Demo Mode Active</p>
+            <p className="text-xs text-white/70 mt-0.5">Use the Admin Panel to trigger regulation changes and watch the Autonomous OS react in real time.</p>
+          </div>
         </div>
       </div>
 
@@ -125,49 +128,49 @@ export default function DashboardPage() {
       {/* ─── ROW 2: KPI Cards ─── */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4 animate-fade-in-up stagger-1">
         {/* Health Score */}
-        <Card className="glass border-white/[0.06] p-5 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.03] to-transparent" />
+        <Card className="glass border-emerald-500/10 p-5 relative overflow-hidden hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(249,115,22,0.15)] transition-all duration-300 group">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/[0.05] to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
           <div className="relative">
-            <div className="text-[10px] font-mono text-white/40 tracking-widest uppercase">Compliance Health</div>
+            <div className="text-[10px] font-mono text-orange-400/80 tracking-widest uppercase">Compliance Health</div>
             <div className="mt-3 flex items-center justify-between">
               <ConfidenceScore score={(healthAvg ?? 0) / 100} size="lg" />
             </div>
-            <div className="mt-2 text-[11px] font-mono text-white/30">
+            <div className="mt-2 text-[11px] font-mono text-white/40">
               avg across {businesses?.length ?? 0} businesses
             </div>
           </div>
         </Card>
 
         {/* Active Obligations */}
-        <Card className="glass border-white/[0.06] p-5 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent" />
+        <Card className="glass border-orange-500/10 p-5 relative overflow-hidden hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(249,115,22,0.2)] transition-all duration-300 group">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/[0.06] to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
           <div className="relative">
-            <div className="text-[10px] font-mono text-white/40 tracking-widest uppercase">Active Obligations</div>
-            <div className="mt-3 text-3xl font-semibold font-mono">{pendingCount + overdueCount}</div>
+            <div className="text-[10px] font-mono text-blue-400/80 tracking-widest uppercase">Active Obligations</div>
+            <div className="mt-3 text-3xl font-semibold font-mono text-white drop-shadow-md">{pendingCount + overdueCount}</div>
             <div className="mt-2 flex items-center gap-3 text-[11px] font-mono">
-              <span className="text-amber-400">pending {pendingCount}</span>
+              <span className="text-amber-400 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]">pending {pendingCount}</span>
               <span className="text-white/20">•</span>
-              <span className="text-red-400">overdue {overdueCount}</span>
+              <span className="text-red-400 drop-shadow-[0_0_4px_rgba(248,113,113,0.5)]">overdue {overdueCount}</span>
               <span className="text-white/20">•</span>
-              <span className="text-emerald-400">done {compliantCount}</span>
+              <span className="text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]">done {compliantCount}</span>
             </div>
           </div>
         </Card>
 
         {/* HITL Queue */}
-        <Card className="glass border-white/[0.06] p-5 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.03] to-transparent" />
+        <Card className="glass border-orange-500/10 p-5 relative overflow-hidden hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(249,115,22,0.2)] transition-all duration-300 group">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.05] to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
           <div className="relative">
-            <div className="text-[10px] font-mono text-white/40 tracking-widest uppercase">HITL Queue</div>
-            <div className="mt-3 text-3xl font-semibold font-mono">{stats?.hitl_pending ?? 0}</div>
+            <div className="text-[10px] font-mono text-amber-400/80 tracking-widest uppercase">HITL Queue</div>
+            <div className="mt-3 text-3xl font-semibold font-mono text-white drop-shadow-md">{stats?.hitl_pending ?? 0}</div>
             <div className="mt-2">
               {stats?.hitl_pending && stats.hitl_pending > 0 ? (
-                <span className="text-[11px] font-mono text-amber-400 flex items-center gap-1.5">
+                <span className="text-[11px] font-mono text-amber-400 flex items-center gap-1.5 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]">
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-dot-pulse" />
                   Requires Attention
                 </span>
               ) : (
-                <span className="text-[11px] font-mono text-emerald-400">All clear ✓</span>
+                <span className="text-[11px] font-mono text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]">All clear ✓</span>
               )}
             </div>
           </div>
@@ -187,13 +190,13 @@ export default function DashboardPage() {
       {/* ─── ROW 3: Feed + Activity ─── */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 animate-fade-in-up stagger-2">
         {/* Compliance Feed */}
-        <Card className="glass border-white/[0.06] p-5 lg:col-span-2">
+        <Card className="glass border-white/[0.08] p-5 lg:col-span-2">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm font-semibold">Live Compliance Feed</div>
-              <div className="mt-0.5 text-[11px] font-mono text-white/30">{unreadCount} unread alerts</div>
+              <div className="text-sm font-semibold text-gradient-primary">Live Compliance Feed</div>
+              <div className="mt-0.5 text-[11px] font-mono text-white/40">{unreadCount} unread alerts</div>
             </div>
-            <Link href="/compliance-feed" className="text-xs text-blue-400 hover:text-blue-300 font-mono">
+            <Link href="/compliance-feed" className="text-xs text-orange-400 hover:text-orange-300 font-mono">
               View all →
             </Link>
           </div>
@@ -234,10 +237,10 @@ export default function DashboardPage() {
         </Card>
 
         {/* Agent Activity Log */}
-        <Card className="glass border-white/[0.06] p-5">
+        <Card className="glass border-white/[0.08] p-5">
           <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold">Agent Activity (CAAL)</div>
-            <Link href="/audit-trail" className="text-xs text-blue-400 hover:text-blue-300 font-mono">
+            <div className="text-sm font-semibold text-gradient-primary">Agent Activity (CAAL)</div>
+            <Link href="/audit-trail" className="text-xs text-orange-400 hover:text-orange-300 font-mono">
               Full trail →
             </Link>
           </div>
@@ -267,11 +270,11 @@ export default function DashboardPage() {
       </div>
 
       {/* ─── ROW 4: Business Table ─── */}
-      <Card className="glass border-white/[0.06] p-5 animate-fade-in-up stagger-3">
+      <Card className="glass border-white/[0.08] p-5 animate-fade-in-up stagger-3">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-semibold">Business Compliance Table</div>
-            <div className="mt-0.5 text-[11px] font-mono text-white/30">{businesses?.length ?? 0} demo businesses</div>
+            <div className="text-sm font-semibold text-gradient-primary">Business Compliance Table</div>
+            <div className="mt-0.5 text-[11px] font-mono text-white/40">{businesses?.length ?? 0} demo businesses</div>
           </div>
         </div>
         <div className="mt-4 overflow-x-auto">
