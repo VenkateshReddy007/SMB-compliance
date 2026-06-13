@@ -1,6 +1,15 @@
 {
-  "installCommand": "cd apps/web && npm install",
-  "buildCommand": "cd apps/web && npm run build",
-  "outputDirectory": "apps/web/.next",
-  "framework": "nextjs"
+  "experimentalServices": {
+    "web": {
+      "root": "apps/web",
+      "framework": "nextjs",
+      "installCommand": "npm install",
+      "buildCommand": "npm run build",
+      "outputDirectory": ".next"
+    },
+    "api": {
+      "root": "api",
+      "framework": "fastapi"
+    }
+  }
 }

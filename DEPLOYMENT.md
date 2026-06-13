@@ -12,16 +12,17 @@ For local testing, the laptop must be running:
 
 If the laptop server is not running, the phone shows "site cannot be reached". `localhost` also does not work from the phone because `localhost` means the phone itself.
 
-## Vercel Frontend
-
-Vercel is enough for the frontend.
+## Vercel
 
 Recommended Vercel settings:
 
-- Root Directory: `apps/web`
-- Framework: Next.js
-- Build Command: `npm run build`
-- Output Directory: leave blank
+- Root Directory: `.`
+- Framework: Other / detected by `vercel.json`
+
+The root `vercel.json` defines two services:
+
+- `web`: Next.js app from `apps/web`
+- `api`: FastAPI app from `api/index.py`
 
 Set these Vercel environment variables:
 
@@ -34,9 +35,9 @@ NEXT_PUBLIC_WS_URL=wss://your-api-host.example/ws
 NEXT_PUBLIC_APP_URL=https://your-vercel-app.vercel.app
 ```
 
-## Backend
+## Backend Caveat
 
-The FastAPI backend is not a simple static deployment. It needs:
+The FastAPI backend still needs:
 
 - Python runtime
 - PostgreSQL
@@ -45,7 +46,7 @@ The FastAPI backend is not a simple static deployment. It needs:
 - WebSocket support
 - Background scheduler support
 
-Use Railway, Render, Fly.io, or a VPS for the backend. Vercel serverless can host small Python functions, but this backend uses startup state, scheduler jobs, ChromaDB, WebSockets, Postgres, and Redis, so a long-running backend host is the safer path.
+Vercel can import the service through `api/index.py`, but this backend uses startup state, scheduler jobs, ChromaDB, WebSockets, Postgres, and Redis. For a hackathon demo this may be enough to get HTTP routes online, but a long-running backend host such as Railway, Render, Fly.io, or a VPS is still the safer path.
 
 Set backend environment variables from `env.example`, especially:
 
