@@ -1,34 +1,35 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/RegGraph_AI-Autonomous_Compliance_OS-f97316?style=for-the-badge&labelColor=0a0800" alt="RegGraph AI" />
-</p>
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=f97316,ec4899,8b5cf6&height=240&section=header&text=RegGraph%20AI&fontSize=72&fontAlignY=35&fontColor=ffffff&desc=Autonomous%20Compliance%20OS%20for%20Indian%20Enterprise&descSize=22&descAlignY=60" width="100%" />
 
-<h1 align="center">RegGraph AI — Autonomous Compliance OS</h1>
+  <br />
 
-<p align="center">
-  <strong>An agentic, dual-rail AI platform that autonomously monitors Indian regulatory portals, detects changes, cascades obligation updates, and escalates to humans — all before the deadline.</strong>
-</p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Next.js-14-black?logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/FastAPI-0.104-009688?logo=fastapi" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/LangGraph-Orchestration-blue?logo=langchain" alt="LangGraph" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Groq-LLM-orange?logo=ai" alt="Groq" />
-  <img src="https://img.shields.io/badge/ChromaDB-RAG-green" alt="ChromaDB" />
-  <img src="https://img.shields.io/badge/D3.js-Graph-f9a825?logo=d3.js" alt="D3.js" />
-</p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/Next.js_14-black?style=flat-square&logo=next.js&logoColor=white" alt="Next.js" />
+    <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
+    <img src="https://img.shields.io/badge/LangGraph-blue?style=flat-square&logo=langchain&logoColor=white" alt="LangGraph" />
+    <img src="https://img.shields.io/badge/PostgreSQL_16-336791?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/Redis_7-DC382D?style=flat-square&logo=redis&logoColor=white" alt="Redis" />
+    <img src="https://img.shields.io/badge/ChromaDB-green?style=flat-square&logo=google&logoColor=white" alt="ChromaDB" />
+    <img src="https://img.shields.io/badge/Groq_Llama_3-orange?style=flat-square&logo=ai&logoColor=white" alt="Groq" />
+    <img src="https://img.shields.io/badge/Clerk_Auth-6C47FF?style=flat-square&logo=clerk&logoColor=white" alt="Clerk" />
+  </p>
+
+  <p align="center">
+    <b>An autonomous, dual-rail compliance engine that monitors Indian regulatory portals, executes obligation cascades, and ensures cryptographic verification for modern enterprise.</b>
+  </p>
+</div>
+
+## Abstract
+
+RegGraph AI is a full-stack, enterprise-grade compliance APK for mobile first approach designed for Indian SMBs and enterprises. The platform continuously monitors live regulatory portals (GSTN, EPFO, FSSAI, State Professional Tax), detects regulatory shifts in real time, and automatically cascades changes across all affected business profiles. 
+
+Every autonomous decision is strictly verified through a Dual-Rail Architecture: a high-performance LLM reasoning rail is cross-evaluated against a deterministic Python-based rule engine. In the event of a variance or disagreement between the rails, the pipeline triggers a zero-trust human-in-the-loop escalation, guaranteeing high-integrity compliance operations.
 
 ---
 
-## 🧠 What is RegGraph AI?
-
-RegGraph AI is a **full-stack autonomous compliance operating system** designed for Indian SMBs. It continuously monitors live regulatory portals (GSTN, EPFO, FSSAI, State PT), detects rule changes in real-time, and automatically cascades the impact across all affected businesses — triggering obligation updates, payroll recalculations, and human-in-the-loop escalation when AI confidence is low.
-
-**The core innovation:** Every autonomous decision is verified through a **Dual-Rail Architecture** — an LLM-powered reasoning rail (Rail A) is cross-checked against a deterministic rule engine (Rail B). When they disagree, the system **automatically escalates to a human reviewer**, ensuring zero-trust AI compliance.
-
----
-
-## 🏗️ Architecture
+## Architectural Layout
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -36,7 +37,7 @@ RegGraph AI is a **full-stack autonomous compliance operating system** designed 
 │  Landing Page · Dashboard · Compliance Feed · Obligation Graph    │
 │  GST Filing · Payroll · Audit Trail · KG Explorer · Admin Panel   │
 │  HITL Queue · AI Assistant · DPDP Vault                           │
-├────────────────────────────────────────────────────────────────────┤
+│────────────────────────────────────────────────────────────────────│
 │                     FASTAPI BACKEND (8001)                         │
 │  /compliance · /gst · /payroll · /audit · /hitl · /admin          │
 │  /knowledge · /assistant · /obligations · /demo                   │
@@ -47,8 +48,6 @@ RegGraph AI is a **full-stack autonomous compliance operating system** designed 
 ├──────────────┴──────────────┴──────────────┴──────────────────────┤
 │               LANGGRAPH ORCHESTRATOR                              │
 │  IRDA → COCE → DRCA (Rail A + Rail B) → HITL → CAAL              │
-├────────────────────────────────────────────────────────────────────┤
-│  PostgreSQL 16  │  Redis 7  │  ChromaDB (RAG)  │  Groq LLM       │
 └────────────────────────────────────────────────────────────────────┘
          ↕                           ↕
 ┌─────────────────────┐   ┌──────────────────────┐
@@ -61,256 +60,212 @@ RegGraph AI is a **full-stack autonomous compliance operating system** designed 
 └─────────────────────┘   └──────────────────────┘
 ```
 
----
+### Agentic Pipeline Flow
 
-## 🤖 Agentic Pipeline (7 Agents)
-
-| # | Agent | Role | Key File |
-|---|-------|------|----------|
-| 1 | **IRDA** (Intelligent Regulation Delta Analyzer) | Polls external portals every 30s, detects regulatory changes | `services/agents/irda/` |
-| 2 | **COCE** (Cascade Obligation Computation Engine) | Maps detected changes to affected businesses & obligations | `services/agents/coce/` |
-| 3 | **DRCA** (Dual-Rail Compliance Assessor) | Rail A (LLM) + Rail B (Rule Engine) parallel evaluation | `services/agents/drca/` |
-| 4 | **HITL** (Human-in-the-Loop Resolver) | Escalates divergent rail results to human reviewers | `services/agents/hitl/` |
-| 5 | **CAAL** (Cryptographic Agent Action Ledger) | Hash-signs and logs every agent decision immutably | `services/agents/caal/` |
-| 6 | **GST Agent** | Filing readiness, obligation tracking, export generation | `services/agents/gst_agent/` |
-| 7 | **Payroll Agent** | PF / ESI / PT / TDS computation via deterministic rule engine | `services/agents/payroll_agent/` |
-
-**Orchestration:** All agents are wired together via `services/agents/orchestrator.py` using **LangGraph** state machines. The pipeline executes: `IRDA → COCE → DRCA → (HITL if divergent) → CAAL`.
-
----
-
-## 📱 Frontend Pages
-
-| Page | Route | Description |
-|------|-------|-------------|
-| **Landing Page** | `/` | Animated particle canvas, feature showcase, orange/black theme |
-| **Dashboard** | `/(dashboard)` | KPI cards, live compliance feed, agent activity, business table |
-| **Compliance Feed** | `/compliance-feed` | Real-time alerts and obligation change notifications |
-| **Obligation Graph** | `/obligation-graph` | Interactive D3.js force-directed graph of regulation dependencies |
-| **KG Explorer** | `/kg-explorer` | Knowledge graph visualization + ChromaDB RAG stats |
-| **GST Filing** | `/gst-filing` | Monthly GST obligation tracking with readiness scoring |
-| **Payroll** | `/payroll` | PF, ESI, PT, TDS computation with deterministic rule engine |
-| **Audit Trail** | `/audit-trail` | CAAL ledger — cryptographic log of all agent decisions |
-| **HITL Queue** | `/hitl` | Human review queue for AI-divergent compliance assessments |
-| **Admin Panel** | `/admin` | Trigger regulation changes, simulate breaches, manage portals |
-| **AI Assistant** | `/assistant` | Groq-powered compliance chat assistant with RAG |
-| **DPDP Vault** | `/admin` (tab) | Data privacy breach simulation & consent management |
+```mermaid
+graph TD
+    IRDA[IRDA: Portal Monitor] -->|Detects Change| COCE[COCE: Obligation Cascade]
+    COCE -->|Triggers Evaluation| DRCA{DRCA: Dual-Rail Engine}
+    DRCA -->|Rail A: LLM Reasoning| RailA[Groq LLM + Chroma RAG]
+    DRCA -->|Rail B: Deterministic| RailB[Deterministic Rule Engine]
+    RailA --> Compare{Compare Confidence}
+    RailB --> Compare
+    Compare -->|Divergent Results| HITL[HITL: Human Resolver]
+    Compare -->|Convergent Results| CAAL[CAAL: Crypto Audit Log]
+    HITL -->|Human Approved| CAAL
+    CAAL -->|Immutable Log| DB[(PostgreSQL Ledger)]
+```
 
 ---
 
-## 🛠️ Tech Stack
+## Autonomous Agent Matrix
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Next.js 14, React 18, TypeScript, Tailwind CSS, D3.js, Clerk Auth |
-| **Backend** | FastAPI, SQLAlchemy (async), Pydantic, WebSockets |
-| **AI / LLM** | Groq (Llama 3), LangGraph, ChromaDB (RAG) |
-| **Database** | PostgreSQL 16 (via Docker), Redis 7 (event bus) |
-| **Infra** | Docker Compose, Vercel (mock portals) |
-| **Auth** | Clerk (SSO, user management) |
+The platform orchestrates seven specialised agents coordinated via LangGraph state machines:
+
+| Agent | Module | Role | Core Process |
+| :--- | :--- | :--- | :--- |
+| **IRDA** | Intelligent Regulation Delta Analyzer | Portal scraping & polling | Periodically scans regulatory sites (30s intervals) and triggers alerts on document diffs |
+| **COCE** | Cascade Obligation Computation Engine | Dependency traversal | Evaluates transitive impacts across business configurations using directed obligation graphs |
+| **DRCA** | Dual-Rail Compliance Assessor | Validation engine | Executes parallel evaluations across statistical (LLM) and deterministic (Rule Engine) paths |
+| **HITL** | Human-in-the-Loop Resolver | Exception management | Surfaces confidence anomalies and divergent classifier outputs to humans for validation |
+| **CAAL** | Cryptographic Agent Action Ledger | Ledger operations | Signs agent decisions, inputs, and outputs with SHA-256 hashes for immutable auditing |
+| **GST Agent** | GST Compliance Manager | Tax operations | Tracks filing deadlines, evaluates readiness scores, and manages draft payloads |
+| **Payroll Agent** | Payroll Calculation Engine | Calculation operations | Calculates PF, ESI, PT, and TDS obligations against verified legislative thresholds |
 
 ---
 
-## 🚀 Quick Start
+## Platform Directories & Map
+
+```
+regraph-ai/
+├── apps/
+│   ├── web/                          # Next.js 14 Web Application
+│   │   ├── app/
+│   │   │   ├── page.tsx              # Interactive Landing Page
+│   │   │   ├── globals.css           # Premium Tailwind Design System
+│   │   │   ├── (auth)/               # Clerk Authentication Routes
+│   │   │   └── (dashboard)/          # Application Portals
+│   │   │       ├── layout.tsx        # Layout Shell with Particle Overlay
+│   │   │       ├── admin/            # Administrative Control Board
+│   │   │       ├── audit-trail/      # CAAL Cryptographic Ledger Viewer
+│   │   │       ├── compliance-feed/  # Real-time Event Streaming
+│   │   │       ├── gst-filing/       # GST Obligation Lifecycle
+│   │   │       ├── hitl/             # Human Verification Interface
+│   │   │       ├── kg-explorer/      # Knowledge Graph Metrics Dashboard
+│   │   │       ├── obligation-graph/ # Dynamic D3.js Force Layout
+│   │   │       ├── payroll/          # Calculations Sandbox
+│   │   │       └── assistant/        # Context-Aware Chatbot Interface
+│   │   ├── components/               # Domain Component Library
+│   │   └── hooks/                    # Reusable React State Logic
+│   └── mock-portals/                 # Vercel Serverless Scrapers Mock Layer
+├── services/
+│   ├── api/                          # FastAPI Service Layer
+│   │   ├── main.py                   # Service Entrypoint
+│   │   ├── database.py               # Session Management & Schema Definition
+│   │   └── routers/                  # API Sub-routers
+│   ├── agents/                       # LangGraph Agent Implementation
+│   │   ├── orchestrator.py           # State Machine Wiring
+│   │   ├── caal/                     # Audit Packing and Signing
+│   │   ├── coce/                     # Graph Evaluation Engine
+│   │   ├── drca/                     # Dual-Rail Validation Execution
+│   │   └── irda/                     # Portal Watchers and Delta Extraction
+│   ├── knowledge/                    # Shared Regulatory Knowledge Base
+│   │   ├── rule_engine/              # Python Hardcoded Legal Rules
+│   │   └── rag/                      # Vector Search and ChromaDB Connectors
+│   └── scheduler/                    # Asynchronous Scheduling Layer
+├── data/seed/                        # Initial Database Seeds
+├── docker-compose.yml                # Multi-container Infrastructure Setup
+└── .env                              # Base Configuration Variables
+```
+
+---
+
+## Core Engineering Decisions
+
+### Dual-Rail Verification
+To eliminate the unpredictability inherent in large language models, every regulatory assessment proceeds through parallel tracks:
+* **Rail A (Probabilistic):** Parses text and queries rules via an LLM (Llama 3 hosted on Groq) informed by a highly localized ChromaDB vector index (RAG).
+* **Rail B (Deterministic):** Evaluates exact numeric inputs against static legislative rules (PF, ESI, Professional Tax, TDS).
+
+The orchestrator monitors their confidence outputs. If `|confidence_A - confidence_B| > 0.15`, the system suspends execution and routes the transaction to the human queue.
+
+### Cryptographic Agent Action Ledger (CAAL)
+To assure auditors of data integrity, every step of the agent execution lifecycle is logged immutably:
+1. Inputs, outputs, and intermediate states are captured and structured.
+2. The packet is signed with the unique cryptographic identifier (DID) of the agent.
+3. The data is hashed using SHA-256 and appended sequentially to the PostgreSQL ledger.
+
+This creates a high-fidelity, tamper-resistant history trail matching strict corporate compliance requirements.
+
+---
+
+## Technology Directory
+
+| Layer | System Components |
+| :--- | :--- |
+| **User Interface** | Next.js 14, React 18, TypeScript, Tailwind CSS, D3.js, Framer Motion |
+| **App Security** | Clerk SSO Identity Provider |
+| **API Backend** | FastAPI, Asyncio, SQLAlchemy Core, Pydantic v2, WebSockets |
+| **AI Architecture** | LangGraph Workflow Engine, Groq (Llama 3 70B), Chroma Vector DB |
+| **Persistence** | PostgreSQL 16 Enterprise DB, Redis 7 In-Memory Cache & Message Broker |
+| **Infrastructure** | Docker, Docker Compose, Vercel Serverless |
+
+---
+
+## Quick Start Configuration
 
 ### Prerequisites
+* Node.js v18 or later
+* Python v3.11 or later
+* Docker Desktop installed and running
+* Groq API Key
+* Clerk credentials
 
-- **Node.js** ≥ 18
-- **Python** ≥ 3.11
-- **Docker Desktop** (for PostgreSQL + Redis)
-- **Clerk** account (for authentication)
-- **Groq** API key (for LLM)
-
-### 1. Clone & Install
+### 1. Installation
 
 ```bash
-git clone https://github.com/samarthsharma77/HEAPIFY_NMIT.git
-cd regraph-ai
+# Clone the repository
+git clone https://github.com/rohan-chand-m-01/Reg_Graph.git
+cd Reg_Graph
 
-# Frontend
+# Install client packages
 cd apps/web
 npm install
 cd ../..
 
-# Backend
-pip install -r requirements.txt  # or use your venv
+# Install backend dependencies
+pip install -r services/api/requirements.txt
 ```
 
-### 2. Environment Variables
+### 2. Environment Setup
 
-Create a `.env` file in the project root:
+Create a `.env` file in the root directory:
 
 ```env
-# Database
+# Database Connections
 DATABASE_URL=postgresql+asyncpg://rguser:rgpass123@localhost:5433/regraph
 SYNC_DATABASE_URL=postgresql://rguser:rgpass123@localhost:5433/regraph
 
-# Redis
+# Cache Layer
 REDIS_URL=redis://localhost:6379
 
-# LLM
+# LLM Providers
 GROQ_API_KEY=your_groq_api_key_here
 
-# Auth (also set in apps/web/.env.local)
+# Clerk Authenticator
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
 CLERK_SECRET_KEY=sk_...
 
-# Portals (Vercel-hosted mocks)
+# Sandbox Portal Mock URLs
 GSTN_PORTAL_URL=https://your-gstn-portal.vercel.app
 EPFO_PORTAL_URL=https://your-epfo-portal.vercel.app
 FSSAI_PORTAL_URL=https://your-fssai-portal.vercel.app
 PT_PORTAL_URL=https://your-pt-portal.vercel.app
 ```
 
-### 3. Start Infrastructure
+### 3. Initialize & Launch Services
 
 ```bash
-docker compose up -d   # Starts PostgreSQL + Redis
-```
+# Start Docker containers (PostgreSQL + Redis)
+docker compose up -d
 
-### 4. Seed Database
-
-```bash
-# Initialize schema
+# Execute database migrations and seed system records
 python -c "from database import init_db; import asyncio; asyncio.run(init_db())"
-
-# Seed demo businesses + obligations + audit entries
 cd data/seed && python seed_db.py
-```
+cd ../..
 
-### 5. Start Backend
-
-```bash
+# Launch FastAPI backend API (port 8001)
 cd services/api
 uvicorn main:app --host 0.0.0.0 --port 8001 --reload
-```
+cd ../..
 
-### 6. Start Frontend
-
-```bash
+# Start Next.js development client (port 3000)
 cd apps/web
 npm run dev
 ```
 
-Open **http://localhost:3000** → You'll see the animated landing page. Click **Sign In** to enter the dashboard.
+Navigate to `http://localhost:3000` to interact with the platform dashboard.
 
 ---
 
-## 🎮 Demo Walkthrough
+## Verification Matrix
 
-1. **Sign in** via the landing page → Dashboard loads with live KPI cards
-2. **Navigate to Admin Panel** → Click **"Push GSTN Change"** to simulate a regulation update
-3. **Watch the cascade:**
-   - IRDA detects the change (top banner flashes)
-   - COCE maps affected businesses
-   - DRCA evaluates via dual-rail (Rail A + Rail B)
-   - If rails disagree → HITL escalation appears in queue
-   - CAAL logs the entire chain immutably
-4. **Check Audit Trail** → See timestamped, hash-signed entries from all agents
-5. **Compute Payroll** → Select different businesses and click ⚡ Compute to see unique PF/ESI/PT/TDS values
-6. **Explore the Graph** → View the D3.js obligation dependency graph with visible edges and domain-colored nodes
-
----
-
-## 📁 Project Structure
-
-```
-regraph-ai/
-├── apps/
-│   ├── web/                          # Next.js 14 frontend
-│   │   ├── app/
-│   │   │   ├── page.tsx              # Animated landing page
-│   │   │   ├── globals.css           # Orange/black design system
-│   │   │   ├── (auth)/               # Clerk sign-in / sign-up
-│   │   │   └── (dashboard)/          # All dashboard pages
-│   │   │       ├── layout.tsx        # Sidebar + particle canvas
-│   │   │       ├── page.tsx          # Main dashboard
-│   │   │       ├── admin/            # Admin portal
-│   │   │       ├── audit-trail/      # CAAL ledger viewer
-│   │   │       ├── compliance-feed/  # Real-time alerts
-│   │   │       ├── gst-filing/       # GST obligation tracker
-│   │   │       ├── hitl/             # Human review queue
-│   │   │       ├── kg-explorer/      # Knowledge graph explorer
-│   │   │       ├── obligation-graph/ # D3 force graph
-│   │   │       ├── payroll/          # PF/ESI/PT/TDS engine
-│   │   │       └── assistant/        # AI compliance assistant
-│   │   ├── components/               # Shared UI components
-│   │   ├── hooks/                    # Custom React hooks
-│   │   └── middleware.ts             # Clerk auth middleware
-│   └── mock-portals/                 # Vercel-deployed mock regulatory portals
-│       ├── gstn/                     # GSTN mock
-│       ├── epfo/                     # EPFO mock
-│       ├── fssai/                    # FSSAI mock
-│       └── pt-states/               # State PT mock
-├── services/
-│   ├── api/                          # FastAPI backend
-│   │   ├── main.py                   # App entrypoint
-│   │   ├── database.py               # SQLAlchemy models + session
-│   │   └── routers/                  # API endpoints
-│   │       ├── admin.py              # Portal management + breach sim
-│   │       ├── audit.py              # CAAL ledger API
-│   │       ├── compliance.py         # Business compliance status
-│   │       ├── gst.py                # GST filing endpoints
-│   │       ├── hitl.py               # HITL queue management
-│   │       ├── knowledge.py          # Knowledge graph + RAG
-│   │       ├── obligations.py        # Obligation CRUD
-│   │       ├── payroll.py            # Payroll computation
-│   │       └── assistant.py          # AI chat assistant
-│   ├── agents/                       # Autonomous AI agents
-│   │   ├── orchestrator.py           # LangGraph pipeline
-│   │   ├── irda/                     # Regulation delta detector
-│   │   ├── coce/                     # Cascade obligation engine
-│   │   ├── drca/                     # Dual-rail classifier
-│   │   ├── hitl/                     # Human escalation handler
-│   │   ├── caal/                     # Cryptographic audit logger
-│   │   ├── gst_agent/               # GST compliance agent
-│   │   ├── payroll_agent/            # Payroll computation agent
-│   │   └── dpdp/                     # Data privacy vault
-│   ├── knowledge/                    # Knowledge layer
-│   │   ├── obligation_graph/         # Graph data structures
-│   │   ├── rule_engine/              # Deterministic compliance rules
-│   │   │   ├── pf_rules.py           # Provident Fund rules
-│   │   │   ├── esi_rules.py          # ESI rules
-│   │   │   ├── pt_rules.py           # Professional Tax slabs
-│   │   │   └── tds_rules.py          # TDS calculation
-│   │   └── rag/                      # ChromaDB vector store
-│   └── scheduler/                    # Background polling scheduler
-├── data/seed/                        # Database seeding scripts
-├── docker-compose.yml                # PostgreSQL + Redis + API
-└── .env                              # Environment variables
-```
+To demonstrate the full capability of the autonomous pipeline:
+1. Authenticate through the landing page interface to access the main Dashboard.
+2. Enter the **Admin Panel** and select **Push GSTN Change** to trigger a simulated regulation modification.
+3. Observe the live update flow:
+   * **IRDA Watcher** registers the portal modification instantly.
+   * **COCE** updates affected obligations and propagates impacts across the graph.
+   * **DRCA** runs parallel assessments across the LLM and deterministic rule engine.
+   * If divergent, the record appears dynamically in the **HITL Review Queue**.
+   * **CAAL** signs and commits the final resolution state into the immutable audit database.
+4. Open the **Audit Trail** to view cryptographically signed, timestamped action logs for each agent step.
+5. Launch the **D3.js Graph Visualizer** to explore dependency mapping across diverse regulatory domains.
 
 ---
 
-## 🔑 Key Design Decisions
-
-### Dual-Rail Verification
-Every compliance assessment runs through two independent rails:
-- **Rail A (LLM):** Groq-powered reasoning with full regulatory context via RAG
-- **Rail B (Deterministic):** Python rule engine with hardcoded legal thresholds
-
-If `|confidence_A - confidence_B| > threshold`, the result is automatically escalated to the HITL queue. This ensures no fully autonomous decision is made when the AI is uncertain.
 
 
-### Cryptographic Audit Trail (CAAL)
-Every agent action is:
-1. Serialized with all input/output context
-2. SHA-256 hashed
-3. Stored immutably in PostgreSQL with timestamp, agent DID, and confidence score
+## License
 
-This creates a complete, tamper-evident audit trail suitable for regulatory inspection.
-
-### Obligation Knowledge Graph
-Regulations are modeled as a **directed graph** where edges represent dependencies (`requires`, `updates`, `invalidates`). When IRDA detects a change, COCE traverses the graph to find all transitively affected obligations.
-
----
-
-## 👥 Team
-
-**HEAPIFY — NMIT**
-
----
-
-## 📄 License
-
-This project was built for hackathon demonstration purposes.
+This project was engineered and distributed exclusively for hackathon evaluation and demonstration purposes.
